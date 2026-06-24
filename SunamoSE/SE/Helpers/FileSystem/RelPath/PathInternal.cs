@@ -1,66 +1,31 @@
 namespace SunamoSE.SE.Helpers.FileSystem.RelPath;
 
-/// <summary>
-/// Provides internal path manipulation utilities for relative path resolution.
-/// </summary>
 public partial class PathInternal
 {
-    /// <summary>
-    /// The primary directory separator character (backslash on Windows).
-    /// </summary>
     public const char DirectorySeparatorChar = '\\';
 
-    /// <summary>
-    /// The alternative directory separator character (forward slash).
-    /// </summary>
     public const char AltDirectorySeparatorChar = '/';
 
-    /// <summary>
-    /// Length of the UNC prefix (\\).
-    /// </summary>
     // \\
     public const int UncPrefixLength = 2;
 
-    /// <summary>
-    /// Length of the extended UNC prefix (\\?\UNC\ or \\.\UNC\).
-    /// </summary>
     // \\?\UNC\, \\.\UNC\
     public const int UncExtendedPrefixLength = 8;
 
-    /// <summary>
-    /// The volume separator character (colon on Windows).
-    /// </summary>
     public const char VolumeSeparatorChar = ':';
 
-    /// <summary>
-    /// Length of the device prefix (\\?\ or \\.\).
-    /// </summary>
     public const int DevicePrefixLength = 4;
 
-    /// <summary>
-    /// Returns true if the path ends in a directory separator character.
-    /// </summary>
-    /// <param name="path">The path to check.</param>
     public static bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
     {
         return EndsInDirectorySeparator2(path);
     }
 
-    /// <summary>
-    /// Returns true if the path ends in a directory separator character.
-    /// </summary>
-    /// <param name="path">The path to check.</param>
     public static bool EndsInDirectorySeparator2(ReadOnlySpan<char> path)
     {
         return path.Length > 0 && IsDirectorySeparator(path[path.Length - 1]);
     }
 
-    /// <summary>
-    ///     Get the common path length from the start of the string.
-    /// </summary>
-    /// <param name="first">The first path to compare.</param>
-    /// <param name="second">The second path to compare.</param>
-    /// <param name="ignoreCase">Whether to ignore character casing during comparison.</param>
     public static int GetCommonPathLength(string first, string second, bool ignoreCase)
     {
         int commonChars = EqualStartingCharacterCount(first, second, ignoreCase);
@@ -92,12 +57,6 @@ public partial class PathInternal
         return commonChars;
     }
 
-    /// <summary>
-    /// Returns the number of characters that match at the start of two strings.
-    /// </summary>
-    /// <param name="first">The first string to compare.</param>
-    /// <param name="second">The second string to compare.</param>
-    /// <param name="ignoreCase">Whether to ignore character casing during comparison.</param>
     public static int EqualStartingCharacterCount(string first, string second, bool ignoreCase)
     {
         if (ignoreCase)
@@ -118,12 +77,6 @@ public partial class PathInternal
         return 0;
     }
 
-    /// <summary>
-    ///     Returns true if the two paths have the same root.
-    /// </summary>
-    /// <param name="first">The first path to compare.</param>
-    /// <param name="second">The second path to compare.</param>
-    /// <param name="comparisonType">The string comparison type to use.</param>
     public static bool AreRootsEqual(string first, string second, StringComparison comparisonType)
     {
         int firstRootLength = GetRootLength(first.AsSpan());
@@ -139,12 +92,6 @@ public partial class PathInternal
                    comparisonType) == 0;
     }
 
-    /// <summary>
-    ///     Returns true if the path uses the canonical form of extended syntax (@"\\?\" or "\??\"). If the
-    ///     path matches exactly (cannot use alternate directory separators) Windows will skip normalization
-    ///     and path length checks.
-    /// </summary>
-    /// <param name="path">The path to check.</param>
     public static bool IsExtended(ReadOnlySpan<char> path)
     {
         // While paths like "//?/C:/" will work, they're treated the same as "\\.\" paths.
@@ -156,10 +103,6 @@ public partial class PathInternal
                && path[3] == '\\';
     }
 
-    /// <summary>
-    ///     Returns true if the path uses any of the DOS device path syntaxes. ("\\.\", @"\\?\", or "\??\")
-    /// </summary>
-    /// <param name="path">The path to check.</param>
     public static bool IsDevice(ReadOnlySpan<char> path)
     {
         // If the path begins with any two separators is will be recognized and normalized and prepped with
@@ -175,10 +118,6 @@ public partial class PathInternal
                );
     }
 
-    /// <summary>
-    ///     Returns true if the path is a device UNC (\\?\UNC\, \\.\UNC\)
-    /// </summary>
-    /// <param name="path">The path to check.</param>
     public static bool IsDeviceUNC(ReadOnlySpan<char> path)
     {
         return path.Length >= UncExtendedPrefixLength
@@ -189,20 +128,12 @@ public partial class PathInternal
                && path[6] == 'C';
     }
 
-    /// <summary>
-    ///     True if the given character is a directory separator.
-    /// </summary>
-    /// <param name="c">The character to check.</param>
     //[MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsDirectorySeparator(char c)
     {
         return c == DirectorySeparatorChar || c == AltDirectorySeparatorChar;
     }
 
-    /// <summary>
-    ///     Gets the length of the root of the path (drive, share, etc.).
-    /// </summary>
-    /// <param name="path">The path to analyze.</param>
     public static int GetRootLength(ReadOnlySpan<char> path)
     {
         int pathLength = path.Length;
@@ -268,10 +199,6 @@ public partial class PathInternal
         return i;
     }
 
-    /// <summary>
-    ///     Returns true if the given character is a valid drive letter
-    /// </summary>
-    /// <param name="value">The character to check.</param>
     public static bool IsValidDriveChar(char value)
     {
         return (value >= 'A' && value <= 'Z') || (value >= 'a' && value <= 'z');
