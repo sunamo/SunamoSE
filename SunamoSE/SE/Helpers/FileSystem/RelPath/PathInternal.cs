@@ -66,11 +66,11 @@ public partial class PathInternal
         }
 
         int maxLength = Math.Min(first.Length, second.Length);
-        for (int i = 0; i < maxLength; i++)
+        for (int index = 0; index < maxLength; index++)
         {
-            if (first[i] != second[i])
+            if (first[index] != second[index])
             {
-                return i;
+                return index;
             }
         }
 
@@ -129,15 +129,15 @@ public partial class PathInternal
     }
 
     //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsDirectorySeparator(char c)
+    public static bool IsDirectorySeparator(char character)
     {
-        return c == DirectorySeparatorChar || c == AltDirectorySeparatorChar;
+        return character == DirectorySeparatorChar || character == AltDirectorySeparatorChar;
     }
 
     public static int GetRootLength(ReadOnlySpan<char> path)
     {
         int pathLength = path.Length;
-        int i = 0;
+        int index = 0;
 
         bool deviceSyntax = IsDevice(path);
         bool deviceUnc = deviceSyntax && IsDeviceUNC(path);
@@ -150,36 +150,36 @@ public partial class PathInternal
                 // UNC (\\?\UNC\ or \\), scan past server\share
 
                 // Start past the prefix ("\\" or "\\?\UNC\")
-                i = deviceUnc ? UncExtendedPrefixLength : UncPrefixLength;
+                index = deviceUnc ? UncExtendedPrefixLength : UncPrefixLength;
 
                 // Skip two separators at most
-                int n = 2;
-                while (i < pathLength && (!IsDirectorySeparator(path[i]) || --n > 0))
+                int separatorsToSkip = 2;
+                while (index < pathLength && (!IsDirectorySeparator(path[index]) || --separatorsToSkip > 0))
                 {
-                    i++;
+                    index++;
                 }
             }
             else
             {
                 // Current drive rooted (e.g. "\foo")
-                i = 1;
+                index = 1;
             }
         }
         else if (deviceSyntax)
         {
             // Device path (e.g. "\\?\.", "\\.\")
             // Skip any characters following the prefix that aren't a separator
-            i = DevicePrefixLength;
-            while (i < pathLength && !IsDirectorySeparator(path[i]))
+            index = DevicePrefixLength;
+            while (index < pathLength && !IsDirectorySeparator(path[index]))
             {
-                i++;
+                index++;
             }
 
             // If there is another separator take it, as long as we have had at least one
             // non-separator after the prefix (e.g. don't take "\\?\\", but take "\\?\a\")
-            if (i < pathLength && i > DevicePrefixLength && IsDirectorySeparator(path[i]))
+            if (index < pathLength && index > DevicePrefixLength && IsDirectorySeparator(path[index]))
             {
-                i++;
+                index++;
             }
         }
         else if (pathLength >= 2
@@ -187,16 +187,16 @@ public partial class PathInternal
                  && IsValidDriveChar(path[0]))
         {
             // Valid drive specified path ("C:", "D:", etc.)
-            i = 2;
+            index = 2;
 
             // If the colon is followed by a directory separator, move past it (e.g "C:\")
             if (pathLength > 2 && IsDirectorySeparator(path[2]))
             {
-                i++;
+                index++;
             }
         }
 
-        return i;
+        return index;
     }
 
     public static bool IsValidDriveChar(char value)
