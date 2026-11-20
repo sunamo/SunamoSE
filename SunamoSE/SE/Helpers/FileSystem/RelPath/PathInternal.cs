@@ -2,30 +2,63 @@ namespace SunamoSE.SE.Helpers.FileSystem.RelPath;
 
 public partial class PathInternal
 {
+    /// <summary>
+    /// The directory separator char constant.
+    /// </summary>
     public const char DirectorySeparatorChar = '\\';
 
+    /// <summary>
+    /// The alt directory separator char constant.
+    /// </summary>
     public const char AltDirectorySeparatorChar = '/';
 
     // \\
+    /// <summary>
+    /// The unc prefix length constant.
+    /// </summary>
     public const int UncPrefixLength = 2;
 
     // \\?\UNC\, \\.\UNC\
+    /// <summary>
+    /// The unc extended prefix length constant.
+    /// </summary>
     public const int UncExtendedPrefixLength = 8;
 
+    /// <summary>
+    /// The volume separator char constant.
+    /// </summary>
     public const char VolumeSeparatorChar = ':';
 
+    /// <summary>
+    /// The device prefix length constant.
+    /// </summary>
     public const int DevicePrefixLength = 4;
 
+    /// <summary>
+    /// Ends in directory separator.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <returns>The ends in directory separator result.</returns>
     public static bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
     {
         return EndsInDirectorySeparator2(path);
     }
 
+    /// <summary>
+    /// Ends in directory separator 2.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <returns>The ends in directory separator 2 result.</returns>
     public static bool EndsInDirectorySeparator2(ReadOnlySpan<char> path)
     {
         return path.Length > 0 && IsDirectorySeparator(path[path.Length - 1]);
     }
 
+    /// <summary>
+    /// Get common path length.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <returns>The get common path length result.</returns>
     public static int GetCommonPathLength(string first, string second, bool ignoreCase)
     {
         int commonChars = EqualStartingCharacterCount(first, second, ignoreCase);
@@ -57,6 +90,11 @@ public partial class PathInternal
         return commonChars;
     }
 
+    /// <summary>
+    /// Equal starting character count.
+    /// </summary>
+    /// <param name="commonChars">The common chars.</param>
+    /// <returns>The equal starting character count result.</returns>
     public static int EqualStartingCharacterCount(string first, string second, bool ignoreCase)
     {
         if (ignoreCase)
@@ -77,6 +115,10 @@ public partial class PathInternal
         return 0;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the are roots equal class.
+    /// </summary>
+    /// <param name="ignoreCase">The ignore case.</param>
     public static bool AreRootsEqual(string first, string second, StringComparison comparisonType)
     {
         int firstRootLength = GetRootLength(first.AsSpan());
@@ -92,6 +134,13 @@ public partial class PathInternal
                    comparisonType) == 0;
     }
 
+    /// <summary>
+    /// Is extended.
+    /// </summary>
+    /// <param name="first">The first.</param>
+    /// <param name="second">The second.</param>
+    /// <param name="comparisonType">The comparison type.</param>
+    /// <returns>The is extended result.</returns>
     public static bool IsExtended(ReadOnlySpan<char> path)
     {
         // While paths like "//?/C:/" will work, they're treated the same as "\\.\" paths.
@@ -103,6 +152,11 @@ public partial class PathInternal
                && path[3] == '\\';
     }
 
+    /// <summary>
+    /// Is device.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <returns>The is device result.</returns>
     public static bool IsDevice(ReadOnlySpan<char> path)
     {
         // If the path begins with any two separators is will be recognized and normalized and prepped with
@@ -118,6 +172,11 @@ public partial class PathInternal
                );
     }
 
+    /// <summary>
+    /// Is device UNC.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <returns>The is device UNC result.</returns>
     public static bool IsDeviceUNC(ReadOnlySpan<char> path)
     {
         return path.Length >= UncExtendedPrefixLength
@@ -128,11 +187,21 @@ public partial class PathInternal
                && path[6] == 'C';
     }
 
+    /// <summary>
+    /// Is directory separator.
+    /// </summary>
+    /// <param name="path[0]">The path 0.</param>
+    /// <returns>The is directory separator result.</returns>
     public static bool IsDirectorySeparator(char character)
     {
         return character == DirectorySeparatorChar || character == AltDirectorySeparatorChar;
     }
 
+    /// <summary>
+    /// Get root length.
+    /// </summary>
+    /// <param name="path">The path.</param>
+    /// <returns>The get root length result.</returns>
     public static int GetRootLength(ReadOnlySpan<char> path)
     {
         int pathLength = path.Length;
@@ -198,6 +267,11 @@ public partial class PathInternal
         return index;
     }
 
+    /// <summary>
+    /// Is valid drive char.
+    /// </summary>
+    /// <param name=">">The &gt;.</param>
+    /// <returns>The is valid drive char result.</returns>
     public static bool IsValidDriveChar(char value)
     {
         return (value >= 'A' && value <= 'Z') || (value >= 'a' && value <= 'z');
