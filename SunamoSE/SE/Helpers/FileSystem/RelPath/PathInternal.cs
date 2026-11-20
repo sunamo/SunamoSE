@@ -128,7 +128,6 @@ public partial class PathInternal
                && path[6] == 'C';
     }
 
-    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsDirectorySeparator(char character)
     {
         return character == DirectorySeparatorChar || character == AltDirectorySeparatorChar;
